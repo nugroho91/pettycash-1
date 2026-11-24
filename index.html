@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Generator Petty Cash PDF</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f4f5f7;--card:#fff;--text:#1b1d21;--muted:#6b7280;--line:#e2e5ea;--accent:#d9480f;--accent-t:#fff;--soft:#fdeee6}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121316;--card:#1c1e23;--text:#eceef1;--muted:#9aa1ad;--line:#2d3037;--accent:#ff8a4c;--accent-t:#1b1d21;--soft:#2b211b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121316;--card:#1c1e23;--text:#eceef1;--muted:#9aa1ad;--line:#2d3037;--accent:#ff8a4c;--accent-t:#1b1d21;--soft:#2b211b;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:640px;margin:0 auto;padding:16px 14px 120px}
+h1{font-size:20px;margin:6px 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
+.fixed{font-size:13px;color:var(--muted);font-weight:600;margin:12px 0 5px;text-transform:none}
+.fixed:first-child{margin-top:0}
+input[type=text],textarea,select{width:100%;font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 12px}
+textarea{resize:vertical;min-height:70px}
+.rp{display:flex;align-items:center;gap:8px}
+.rp span{font-weight:600}
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);padding:10px 14px}
+button.primary{background:var(--accent);color:var(--accent-t);border-color:var(--accent);font-weight:600}
+button:disabled{opacity:.45;cursor:not-allowed}
+.drop{display:flex;align-items:center;justify-content:center;gap:8px;border:2px dashed var(--line);border-radius:12px;padding:18px;text-align:center;color:var(--muted);cursor:pointer;background:var(--soft)}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.count{font-size:13px;color:var(--muted)}
+.items{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.item{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:8px;background:var(--bg)}
+.item img{width:64px;height:64px;object-fit:cover;border-radius:8px;flex:none}
+.item .meta{flex:1;min-width:0}
+.item .pos{font-size:13px;font-weight:600}
+.item .pos small{color:var(--muted);font-weight:400}
+.item .name{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctrl{display:flex;gap:6px;flex:none}
+.ctrl button{padding:8px 10px;min-width:38px;line-height:1}
+.pagepreview{margin-top:12px;display:grid;gap:8px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));z-index:5}
+.bar .in{max-width:640px;margin:0 auto;display:flex;gap:10px}
+.bar button{flex:1;padding:13px 10px}
+#msg{font-size:13px;color:var(--muted);text-align:center;margin:4px 0 0;min-height:18px}
+.lay{display:flex;gap:10px;align-items:center;margin-top:12px}
+.lay label{font-size:13px;color:var(--muted);flex:none}
+</style>
+</head>
+<body>
+<main>
+<h1>Generator Petty Cash PDF</h1>
+
+<section class="card">
+  <div class="fixed">Pemakaian Petty Cash</div>
+  <input type="text" id="lokasi" value="NONA SCBD 23 November 2026" aria-label="Lokasi dan tanggal">
+
+  <div class="fixed">Untuk keperluan</div>
+  <textarea id="keperluan" aria-label="Keperluan">Pembelian dish cover/tudung saji keperluan operasional NONA SCBD</textarea>
+
+  <div class="fixed">Sebesar</div>
+  <div class="rp"><span>Rp.</span><input type="text" id="nominal" inputmode="numeric" value="894.600" aria-label="Nominal"></div>
+</section>
+
+<section class="card">
+  <div class="row"><strong>Gambar</strong><span class="count" id="count">0 / 20</span></div>
+  <label class="drop" for="file" style="margin-top:10px">＋ Tambah gambar (maks. 20)</label>
+  <input type="file" id="file" accept="image/*" multiple hidden>
+  <div class="lay">
+    <label for="cols">Susunan:</label>
+    <select id="cols"><option value="1">1 kolom (satu per baris)</option><option value="2" selected>2 kolom (kiri &amp; kanan)</option><option value="3">3 kolom</option><option value="4">4 kolom</option><option value="5">5 kolom</option><option value="6">6 kolom</option><option value="7">7 kolom</option><option value="8">8 kolom</option><option value="9">9 kolom</option><option value="10">10 kolom</option></select>
+  </div>
+  <div class="items" id="items"></div>
+  <p class="count" id="hint" style="margin:10px 0 0">Gambar disusun dari kiri ke kanan, lalu lanjut ke baris berikutnya sesuai jumlah kolom. Gunakan tombol ↑ ↓ untuk menukar posisi.</p>
+</section>
+
+<section class="card">
+  <div class="fixed" style="margin-top:0">Judul dokumen PDF (nama file)</div>
+  <input type="text" id="judul" value="Petty Cash NONA SCBD 23 November 2026" aria-label="Judul PDF">
+</section>
+<p id="msg" role="status"></p>
+</main>
+
+<div class="bar"><div class="in">
+  <button class="primary" id="btnSave">Simpan PDF</button>
+  <button id="btnShare">Bagikan PDF</button>
+</div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+(function(){
+  var MAX=20, imgs=[];
+  var $=function(id){return document.getElementById(id)};
+  var msg=function(t){$('msg').textContent=t||''};
+
+  // nominal format
+  $('nominal').addEventListener('input',function(){
+    var d=this.value.replace(/\D/g,'');
+    this.value=d?d.replace(/\B(?=(\d{3})+(?!\d))/g,'.'):'';
+  });
+
+  function loadImg(file){
+    return new Promise(function(res,rej){
+      var r=new FileReader();
+      r.onerror=rej;
+      r.onload=function(){
+        var im=new Image();
+        im.onerror=rej;
+        im.onload=function(){
+          var s=Math.min(1,1600/Math.max(im.width,im.height));
+          var c=document.createElement('canvas');
+          c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);
+          var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);
+          x.drawImage(im,0,0,c.width,c.height);
+          res({url:c.toDataURL('image/jpeg',.88),w:c.width,h:c.height,name:file.name});
+        };
+        im.src=r.result;
+      };
+      r.readAsDataURL(file);
+    });
+  }
+
+  $('file').addEventListener('change',async function(){
+    var files=Array.prototype.slice.call(this.files);
+    this.value='';
+    var room=MAX-imgs.length;
+    if(files.length>room){msg('Maksimal '+MAX+' gambar. Sebagian tidak ditambahkan.');files=files.slice(0,room)}
+    else msg('');
+    for(var i=0;i<files.length;i++){
+      try{imgs.push(await loadImg(files[i]));render()}catch(e){msg('Gagal membaca '+files[i].name)}
+    }
+  });
+
+  function render(){
+    var cols=+$('cols').value;
+    $('count').textContent=imgs.length+' / '+MAX;
+    var box=$('items');box.textContent='';
+    imgs.forEach(function(im,i){
+      var row=Math.floor(i/cols)+1, side=cols===1?'Tengah':cols===2?(i%2===0?'Kiri':'Kanan'):'Kolom '+(i%cols+1);
+      var d=document.createElement('div');d.className='item';
+      var t=document.createElement('img');t.src=im.url;t.alt='';
+      var m=document.createElement('div');m.className='meta';
+      var p=document.createElement('div');p.className='pos';
+      p.textContent=(i+1)+'. '+side+' ';
+      var sm=document.createElement('small');sm.textContent='· baris '+row;p.appendChild(sm);
+      var n=document.createElement('div');n.className='name';n.textContent=im.name;
+      m.appendChild(p);m.appendChild(n);
+      var c=document.createElement('div');c.className='ctrl';
+      [['↑',-1],['↓',1],['✕',0]].forEach(function(b){
+        var bt=document.createElement('button');bt.textContent=b[0];
+        bt.setAttribute('aria-label',b[1]<0?'Naik':b[1]>0?'Turun':'Hapus');
+        if((b[1]<0&&i===0)||(b[1]>0&&i===imgs.length-1))bt.disabled=true;
+        bt.onclick=function(){
+          if(b[1]===0)imgs.splice(i,1);
+          else{var j=i+b[1],tmp=imgs[i];imgs[i]=imgs[j];imgs[j]=tmp}
+          render();
+        };
+        c.appendChild(bt);
+      });
+      d.appendChild(t);d.appendChild(m);d.appendChild(c);box.appendChild(d);
+    });
+  }
+  $('cols').addEventListener('change',render);
+
+  function build(){
+    var J=window.jspdf;
+    if(!J)throw new Error('Pustaka PDF belum termuat. Periksa koneksi internet.');
+    var doc=new J.jsPDF({unit:'mm',format:'a4'});
+    var W=210,H=297,M=18,cw=W-2*M,y=M+4;
+    doc.setFont('helvetica','normal');doc.setFontSize(12);
+    doc.text('Pemakaian Petty Cash '+$('lokasi').value.trim(),M,y);
+    y+=8;
+    // "Untuk keperluan" normal + isi bold, wrapped
+    var lead='Untuk keperluan ', body=$('keperluan').value.trim().replace(/\s+/g,' ');
+    var leadW=doc.getTextWidth(lead);
+    doc.setFont('helvetica','bold');
+    var words=body.split(' '),line='',lines=[],avail=cw-leadW;
+    words.forEach(function(w){
+      var test=line?line+' '+w:w;
+      if(doc.getTextWidth(test)>avail&&line){lines.push(line);line=w;avail=cw}else line=test;
+    });
+    if(line)lines.push(line);
+    doc.setFont('helvetica','normal');doc.text(lead,M,y);
+    doc.setFont('helvetica','bold');
+    lines.forEach(function(l,k){doc.text(l,k===0?M+leadW:M,y);if(k<lines.length-1)y+=6});
+    y+=8;
+    doc.setFont('helvetica','normal');
+    doc.text('Sebesar Rp. '+($('nominal').value.trim()||'0'),M,y);
+    y+=12;
+
+    var cols=+$('cols').value,gap=cols>5?2:cols>2?4:6,cellW=(cw-gap*(cols-1))/cols,maxH=cols===1?170:cols===2?120:cols<=4?90:60,bottom=H-M;
+    for(var i=0;i<imgs.length;i+=cols){
+      var row=imgs.slice(i,i+cols),hs=row.map(function(im){
+        var w=cellW,h=w*im.h/im.w;if(h>maxH){h=maxH;w=h*im.w/im.h}return{w:w,h:h};
+      });
+      var rowH=Math.max.apply(null,hs.map(function(s){return s.h}));
+      if(y+rowH>bottom){doc.addPage();y=M}
+      row.forEach(function(im,k){
+        var x=M+k*(cellW+gap)+(cellW-hs[k].w)/2;
+        doc.addImage(im.url,'JPEG',x,y,hs[k].w,hs[k].h,undefined,'FAST');
+      });
+      y+=rowH+gap;
+    }
+    return doc;
+  }
+
+  function fname(){
+    var n=$('judul').value.trim().replace(/[\\\/:*?"<>|]+/g,'-')||'Petty Cash';
+    return n+'.pdf';
+  }
+
+  $('btnSave').addEventListener('click',async function(){
+    msg('Membuat PDF…');
+    try{
+      var blob=build().output('blob');
+      var dl=await window.claude.use('downloads');
+      if(dl){await dl.save({filename:fname(),data:blob});msg('PDF siap disimpan.')}
+      else{
+        var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fname();
+        document.body.appendChild(a);a.click();a.remove();msg('PDF diunduh.');
+      }
+    }catch(e){msg(e&&e.code==='declined'?'Penyimpanan dibatalkan.':'Gagal: '+(e.message||e))}
+  });
+
+  $('btnShare').addEventListener('click',async function(){
+    msg('Membuat PDF…');
+    try{
+      var blob=build().output('blob');
+      var file=new File([blob],fname(),{type:'application/pdf'});
+      if(!navigator.share){
+        msg('Browser ini tidak mendukung bagikan langsung. Gunakan “Simpan PDF”, lalu bagikan dari file.');
+        return;
+      }
+      await navigator.share({files:[file],title:$('judul').value.trim()});
+      msg('');
+    }catch(e){
+      msg(e&&e.name==='AbortError'?'':'Tidak bisa membagikan langsung. Gunakan “Simpan PDF”, lalu bagikan dari file.');
+    }
+  });
+  render();
+})();
+</script>
+</body>
+</html>
