@@ -66,7 +66,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
   <input type="file" id="file" accept="image/*" multiple hidden>
   <div class="lay">
     <label for="cols">Susunan:</label>
-    <select id="cols"><option value="1">1 kolom (satu per baris)</option><option value="2" selected>2 kolom (kiri &amp; kanan)</option><option value="3">3 kolom</option><option value="4">4 kolom</option><option value="5">5 kolom</option><option value="6">6 kolom</option><option value="7">7 kolom</option><option value="8">8 kolom</option><option value="9">9 kolom</option><option value="10">10 kolom</option></select>
+    <select id="cols"><option value="1">1 kolom (satu per baris)</option><option value="2" selected>2 kolom (kiri &amp; kanan)</option><option value="3">3 kolom</option><option value="4">4 kolom</option></select>
   </div>
   <div class="items" id="items"></div>
   <p class="count" id="hint" style="margin:10px 0 0">Gambar disusun dari kiri ke kanan, lalu lanjut ke baris berikutnya sesuai jumlah kolom. Gunakan tombol ↑ ↓ untuk menukar posisi.</p>
@@ -186,15 +186,16 @@ button:disabled{opacity:.45;cursor:not-allowed}
     doc.text('Sebesar Rp. '+($('nominal').value.trim()||'0'),M,y);
     y+=12;
 
-    var cols=+$('cols').value,gap=cols>5?2:cols>2?4:6,cellW=(cw-gap*(cols-1))/cols,maxH=cols===1?170:cols===2?120:cols<=4?90:60,bottom=H-M;
+    var cols=+$('cols').value,gap=1.5,cellW=(cw-gap*(cols-1))/cols,maxH=cols===1?170:cols===2?120:90,bottom=H-M;
     for(var i=0;i<imgs.length;i+=cols){
       var row=imgs.slice(i,i+cols),hs=row.map(function(im){
         var w=cellW,h=w*im.h/im.w;if(h>maxH){h=maxH;w=h*im.w/im.h}return{w:w,h:h};
       });
       var rowH=Math.max.apply(null,hs.map(function(s){return s.h}));
+      var rowW=hs.reduce(function(a,s){return a+s.w},0)+gap*(hs.length-1),cx=(W-rowW)/2;
       if(y+rowH>bottom){doc.addPage();y=M}
       row.forEach(function(im,k){
-        var x=M+k*(cellW+gap)+(cellW-hs[k].w)/2;
+        var x=cx;cx+=hs[k].w+gap;
         doc.addImage(im.url,'JPEG',x,y,hs[k].w,hs[k].h,undefined,'FAST');
       });
       y+=rowH+gap;
@@ -211,7 +212,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     msg('Membuat PDF…');
     try{
       var blob=build().output('blob');
-      var dl=await window.claude.use('downloads');
+      var dl=(window.claude&&window.claude.use)?await window.claude.use('downloads'):null;
       if(dl){await dl.save({filename:fname(),data:blob});msg('PDF siap disimpan.')}
       else{
         var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fname();
