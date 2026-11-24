@@ -186,7 +186,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     doc.text('Sebesar Rp. '+($('nominal').value.trim()||'0'),M,y);
     y+=12;
 
-    var cols=+$('cols').value,gap=1.5,cellW=(cw-gap*(cols-1))/cols,maxH=cols===1?170:cols===2?120:90,bottom=H-M;
+    var cols=+$('cols').value,gap=0,cellW=(cw-gap*(cols-1))/cols,maxH=cols===1?200:cols===2?200:150,bottom=H-M;
     for(var i=0;i<imgs.length;i+=cols){
       var row=imgs.slice(i,i+cols),hs=row.map(function(im){
         var w=cellW,h=w*im.h/im.w;if(h>maxH){h=maxH;w=h*im.w/im.h}return{w:w,h:h};
@@ -198,7 +198,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
         var x=cx;cx+=hs[k].w+gap;
         doc.addImage(im.url,'JPEG',x,y,hs[k].w,hs[k].h,undefined,'FAST');
       });
-      y+=rowH+gap;
+      y+=rowH+1;
     }
     return doc;
   }
