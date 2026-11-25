@@ -73,10 +73,6 @@ button:disabled{opacity:.45;cursor:not-allowed}
   <p class="count" id="hint" style="margin:10px 0 0">Gambar disusun dari kiri ke kanan, lalu lanjut ke baris berikutnya sesuai jumlah kolom. Gunakan tombol ↑ ↓ untuk menukar posisi.</p>
 </section>
 
-<section class="card">
-  <div class="fixed" style="margin-top:0">Judul dokumen PDF (nama file)</div>
-  <input type="text" id="judul" value="Petty Cash NONA SCBD 23 November 2026" aria-label="Judul PDF">
-</section>
 <p id="msg" role="status"></p>
 </main>
 
@@ -172,10 +168,17 @@ button:disabled{opacity:.45;cursor:not-allowed}
   }
   $('cols').addEventListener('change',render);
 
+  // judul & nama file otomatis dari kolom "Pemakaian Petty Cash"
+  function autoTitle(){
+    var n=('Petty Cash '+$('lokasi').value.trim()).replace(/\s+/g,' ').trim();
+    return n.replace(/[\\\/:*?"<>|]+/g,'-')||'Petty Cash';
+  }
+
   function build(){
     var J=window.jspdf;
     if(!J)throw new Error('Pustaka PDF belum termuat. Periksa koneksi internet.');
     var doc=new J.jsPDF({unit:'mm',format:'a4'});
+    doc.setProperties({title:autoTitle()});
     var W=210,H=297,M=18,cw=W-2*M,y=M+4;
     doc.setFont('helvetica','normal');doc.setFontSize(12);
     doc.text('Pemakaian Petty Cash '+$('lokasi').value.trim(),M,y);
@@ -216,10 +219,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     return doc;
   }
 
-  function fname(){
-    var n=$('judul').value.trim().replace(/[\\\/:*?"<>|]+/g,'-')||'Petty Cash';
-    return n+'.pdf';
-  }
+  function fname(){return autoTitle()+'.pdf'}
 
   $('btnSave').addEventListener('click',async function(){
     msg('Membuat PDF…');
@@ -243,7 +243,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
         msg('Browser ini tidak mendukung bagikan langsung. Gunakan “Simpan PDF”, lalu bagikan dari file.');
         return;
       }
-      await navigator.share({files:[file],title:$('judul').value.trim()});
+      await navigator.share({files:[file],title:autoTitle()});
       msg('');
     }catch(e){
       msg(e&&e.name==='AbortError'?'':'Tidak bisa membagikan langsung. Gunakan “Simpan PDF”, lalu bagikan dari file.');
